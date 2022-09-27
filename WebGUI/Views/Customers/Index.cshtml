@@ -1,0 +1,96 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div id="customerForm">
+    <form>
+        <img id="cProfilePic" width="100" height="100" />
+        <input type="file" id="cProfileImageUploader" name="cProfileImageUploader" accept="image/*" onchange="readURL(this)" />
+        <input type="text" id="cAccountNumber" name="cAccountNumber" placeholder="Customer Account Number" /><br>
+        <input type="text" id="cFirstName" name="cFirstName" placeholder="Customer First Name" /><br>
+        <input type="text" id="cLastName" name="cLastName" placeholder="Customer Last Name" /><br>
+        <input type="text" id="cPinNumber" name="cPinNumber" placeholder="Customer PIN Number" /><br>
+        <input type="text" id="cBalance" name="cBalance" placeholder="Customer Balance" /><br>
+    </form>
+    <button id="insert" onclick="insert()">Insert</button>
+    <button id="update" onclick="update()">Update</button><br><br><br><br>
+
+</div>
+
+<div id="searchForm">
+    <form>
+        <input type="text" id="searchByID" name="searchByID" placeholder="Customer Account Number" />
+    </form>
+    <button id="search" onclick="searchCustomer()">Search</button>
+
+</div>
+
+
+<div id="deleteForm">
+    <form>
+        <input type="text" id="deleteByID" name="deleteByID" placeholder="Customer Account Number" />
+    </form>
+    <button id="delete" onclick="delete()">Delete</button>
+
+</div>
+
+
+
+<script>
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#cProfilePic')
+                    .attr('src', e.target.result)
+                    .width(150)
+                    .height(200);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function searchCustomer()
+    {
+        $.ajax({
+            url: '/customers/search/' + $('#searchByID').val(),
+            type: 'get',
+            contentType: 'application/json',
+            processData: false,
+            success: function(data, textStatus, jQxhr) {
+
+                var obj = JSON.parse(data);
+                $("#cAccountNumber").val(obj.AccountNumber);
+                $("#cFirstName").val(obj.FirstName);
+                $("#cLastName").val(obj.LastName);
+                $("#cPinNumber").val(obj.PinNumber);
+                $("#cBalance").val(obj.Balance);
+                $("#cProfilePic").attr('src', `data:image/jpg;base64,${obj.ProfileBase64}`);
+            },
+            error: function(jqXhr, textStatus, errorThrown) {
+                alert("Error: Customer not found!");
+                console.log(errorThrown);
+            }
+        
+        })
+    }
+
+    function insert() 
+    {
+        $.ajax({
+            type: 'POST',
+            url: '/customers/insert/',
+            contentType: 'application/json',
+            data: JSON.stringify(
+                "AccountNumber": $('#cAccountNumber').val(),
+                "AccountNumber": $('#cAccountNumber').val(),
+                "AccountNumber": $('#cAccountNumber').val(),
+                "AccountNumber": $('#cAccountNumber').val(),
+                "AccountNumber": $('#cAccountNumber').val(),
+                "AccountNumber": $('#cAccountNumber').val(),
+            )
+        })
+    }
+</script>
