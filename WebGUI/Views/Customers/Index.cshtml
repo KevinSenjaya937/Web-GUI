@@ -31,7 +31,7 @@
     <form>
         <input type="text" id="deleteByID" name="deleteByID" placeholder="Customer Account Number" />
     </form>
-    <button id="delete" onclick="delete()">Delete</button>
+    <button id="deleteUser" onclick="deleteUser()">Delete</button>
 
 </div>
 
@@ -74,23 +74,6 @@
                 console.log(errorThrown);
             }
         
-        })
-    }
-
-    function insert() 
-    {
-        $.ajax({
-            type: 'POST',
-            url: '/customers/insert/',
-            contentType: 'application/json',
-            data: JSON.stringify(
-                "AccountNumber": $('#cAccountNumber').val(),
-                "AccountNumber": $('#cAccountNumber').val(),
-                "AccountNumber": $('#cAccountNumber').val(),
-                "AccountNumber": $('#cAccountNumber').val(),
-                "AccountNumber": $('#cAccountNumber').val(),
-                "AccountNumber": $('#cAccountNumber').val(),
-            )
         })
     }
 </script>
