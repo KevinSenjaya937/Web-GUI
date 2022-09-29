@@ -83,6 +83,7 @@ namespace CustomerDatabaseAPI.Controllers
             try
             {
                 db.SaveChanges();
+                return Ok(customer);
             }
             catch (DbUpdateException)
             {

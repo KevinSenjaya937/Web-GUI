@@ -4,17 +4,21 @@
 @{
 }
 <div id="customerForm">
-    <form>
-        <img id="cProfilePic" width="100" height="100" />
-        <input type="file" id="cProfileImageUploader" name="cProfileImageUploader" accept="image/*" onchange="readURL(this)" />
-        <input type="text" id="cAccountNumber" name="cAccountNumber" placeholder="Customer Account Number" /><br>
-        <input type="text" id="cFirstName" name="cFirstName" placeholder="Customer First Name" /><br>
-        <input type="text" id="cLastName" name="cLastName" placeholder="Customer Last Name" /><br>
-        <input type="text" id="cPinNumber" name="cPinNumber" placeholder="Customer PIN Number" /><br>
-        <input type="text" id="cBalance" name="cBalance" placeholder="Customer Balance" /><br>
+    <form name="customer">
+        <img id="cProfilePic" width="100" height="100" /><br>
+        <input type="file" id="cProfileImageUploader" name="cProfileImageUploader" accept="image/*" onchange="readURL(this)"/><br><br>
+        <input type="text" id="cAccountNumber" name="cAccountNumber" placeholder="Customer Account Number"/><br>
+        <input type="text" id="cFirstName" name="cFirstName" placeholder="Customer First Name"/><br>
+        <input type="text" id="cLastName" name="cLastName" placeholder="Customer Last Name"/><br>
+        <input type="text" id="cPinNumber" name="cPinNumber" placeholder="Customer PIN Number"/><br>
+        <input type="text" id="cBalance" name="cBalance" placeholder="Customer Balance"/><br>
+        
+        
     </form>
-    <button id="insert" onclick="insert()">Insert</button>
-    <button id="update" onclick="update()">Update</button><br><br><br><br>
+    <input type="submit" value="Insert" onclick="insert()" />
+    <input type="submit" value="Update" onclick="update()"/>
+    <p id="debugTextInsert"></p>
+    <br><br><br><br>
 
 </div>
 
@@ -31,13 +35,19 @@
     <form>
         <input type="text" id="deleteByID" name="deleteByID" placeholder="Customer Account Number" />
     </form>
-    <button id="deleteUser" onclick="deleteUser()">Delete</button>
+    <button id="deleteUser" onclick="deleteCustomer()">Delete</button><br><br>
+
+    <button id="generateDatabase" onclick="generateDatabase()">Generate Database</button>
 
 </div>
 
 
 
+
+
 <script>
+
+    var currentImage;
 
     function readURL(input) {
         if (input.files && input.files[0]) {
@@ -45,8 +55,10 @@
             reader.onload = function(e) {
                 $('#cProfilePic')
                     .attr('src', e.target.result)
-                    .width(150)
-                    .height(200);
+                    .width(100)
+                    .height(100);
+
+                currentImage = e.target.result;
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -73,7 +85,99 @@
                 alert("Error: Customer not found!");
                 console.log(errorThrown);
             }
-        
-        })
+
+        });
+    }
+
+    function insert()
+    {
+        $.ajax({
+            type: 'POST',
+            url: 'customers/insert',
+            contentType: 'application/json',
+            data: JSON.stringify(
+            {
+                "AccountNumber": $('#cAccountNumber').val(),
+                "FirstName": $('#cFirstName').val(),
+                "LastName": $('#cLastName').val(),
+                "PinNumber": $('#cPinNumber').val(),
+                "Balance": $('#cBalance').val(),
+                "ProfileBase64": currentImage
+            }),
+            success: function(data, textStatus, jQxhr) {
+                alert("Data Inserted");
+                document.getElementById('debugTextInsert').innerText = "";
+            }, 
+            error: function(xhr, textStatus, error) {
+                alert("Error Adding Customer");
+                console.log(xhr.statusText);
+                console.log(textStatus);
+                console.log(error);
+                document.getElementById('debugTextInsert').innerText = error.toString();
+            }
+        });
+    }
+
+    function update()
+    {
+        $.ajax({
+            type: 'PUT',
+            url: 'customers/update',
+            contentType: 'application/json',
+            data: JSON.stringify(
+            {
+                "AccountNumber": $('#cAccountNumber').val(),
+                "FirstName": $('#cFirstName').val(),
+                "LastName": $('#cLastName').val(),
+                "PinNumber": $('#cPinNumber').val(),
+                "Balance": $('#cBalance').val(),
+                "ProfileBase64": currentImage
+            }),
+            success: function(data, textStatus, jQxhr) {
+                alert("Data Updated");
+            }, 
+            error: function(xhr, textStatus, error) {
+                alert("Error Updating Customer");
+                console.log(xhr.statusText);
+                console.log(textStatus);
+                console.log(error);
+                document.getElementById('debugTextInsert').innerText = "ERROR";
+            }
+        });
+    }
+
+    function deleteCustomer()
+    {
+        $.ajax({
+            url: '/customers/delete/' + $('#deleteByID').val(),
+            type: 'delete',
+            contentType: 'application/json',
+            processData: false,
+            success: function(data, textStatus, jQxhr) {
+                alert("Customer Deleted");
+            },
+            error: function(jqXhr, textStatus, errorThrown) {
+                alert("Error: Customer not found!");
+                console.log(errorThrown);
+            }
+
+        });
+    }
+
+    function generateDatabase()
+    {
+        $.ajax({
+            url: '/customers/generate',
+            contentType: 'application/json',
+            processData: false,
+            success: function(data, textStatus, jQxhr) {
+                alert("Database Generated");
+            },
+            error: function(jqXhr, textStatus, errorThrown) {
+                alert("Database Already Generated");
+                console.log(errorThrown);
+            }
+
+        });
     }
 </script>

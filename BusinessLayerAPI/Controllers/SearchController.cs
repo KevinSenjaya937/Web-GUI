@@ -25,50 +25,76 @@ namespace BusinessLayerAPI.Controllers
         }
 
         // GET: api/Search/5
-        public Customer Get(int id)
+        public IHttpActionResult Get(int id)
         {
             RestRequest request = new RestRequest("api/customers/{id}", Method.Get);
             request.AddUrlSegment("id", id);
             RestResponse response = client.Execute(request);
 
-            Customer customer = JsonConvert.DeserializeObject<Customer>(response.Content);
-            customer.ProfileBase64 = Convert.ToBase64String(customer.ProfilePicture);
-            return customer;
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                Customer customer = JsonConvert.DeserializeObject<Customer>(response.Content);
+                customer.ProfileBase64 = Convert.ToBase64String(customer.ProfilePicture);
+                return Ok(customer);
+            }
+            else
+            {
+                return BadRequest();
+            }
+            
+            
         }
 
         // POST: api/Search
-        public Customer Post([FromBody]Customer customer)
+        public IHttpActionResult Post([FromBody]Customer customer)
         {
             RestRequest request = new RestRequest("api/customers", Method.Post);
             request.AddJsonBody(JsonConvert.SerializeObject(customer));
             RestResponse response = client.Execute(request);
-
-            Customer returnCustomer = JsonConvert.DeserializeObject<Customer>(response.Content);
-            return returnCustomer;
+            
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return Ok("Successfully Added");
+            }
+            else
+            {
+                return BadRequest(response.Content);
+            }
         }
 
         // PUT: api/Search/5
-        public Customer Put(int id, [FromBody]Customer customer)
+        public IHttpActionResult Put(int id, [FromBody]Customer customer)
         {
             RestRequest request = new RestRequest("api/customers/{id}", Method.Put);
             request.AddUrlSegment("id", id);
             request.AddJsonBody(JsonConvert.SerializeObject(customer));
             RestResponse response = client.Execute(request);
 
-            Customer returnCustomer = JsonConvert.DeserializeObject<Customer>(response.Content);
-            return returnCustomer;
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return Ok("Successfully Added");
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         // DELETE: api/Search/5
-        public Customer Delete(int id)
+        public IHttpActionResult Delete(int id)
         {
             RestRequest request = new RestRequest("api/customers/{id}", Method.Delete);
             request.AddUrlSegment("id", id);
             RestResponse response = client.Execute(request);
 
-            Customer customer = JsonConvert.DeserializeObject<Customer>(response.Content);
-
-            return customer;
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return Ok("Successfully Added");
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }

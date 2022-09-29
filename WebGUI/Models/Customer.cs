@@ -8,7 +8,6 @@
         public String PinNumber { get; set; }
         public double Balance { get; set; }
         public byte[] ProfilePicture { get; set; }
-
         public string ProfileBase64 { get; set; }
     }
 }

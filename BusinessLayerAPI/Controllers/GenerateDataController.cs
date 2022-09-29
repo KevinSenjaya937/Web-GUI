@@ -27,7 +27,7 @@ namespace BusinessLayerAPI.Controllers
 
         [Route("generate")]
         [HttpGet]
-        public string GenerateData()
+        public IHttpActionResult GenerateData()
         {
             string test = "Fail";
             for (int i = 0; i < 100; i++)
@@ -44,7 +44,14 @@ namespace BusinessLayerAPI.Controllers
                     test = "Success";
                 }
             }
-            return test;
+            if (test == "Success")
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         public Customer GetNextAccount(int i)
